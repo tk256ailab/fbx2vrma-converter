@@ -33,7 +33,39 @@ class FBXToVRMAConverterFixed {
       'mixamorig:RightLeg': 'rightLowerLeg',
       'mixamorig:RightFoot': 'rightFoot',
       'mixamorig:LeftToeBase': 'leftToes',
-      'mixamorig:RightToeBase': 'rightToes'
+      'mixamorig:RightToeBase': 'rightToes',
+      // Left hand fingers (Thumb: map 2,3,4 to proximal-intermediate-distal)
+      'mixamorig:LeftHandThumb2': 'leftThumbProximal',
+      'mixamorig:LeftHandThumb3': 'leftThumbIntermediate',
+      'mixamorig:LeftHandThumb4': 'leftThumbDistal',
+      'mixamorig:LeftHandIndex1': 'leftIndexProximal',
+      'mixamorig:LeftHandIndex2': 'leftIndexIntermediate',
+      'mixamorig:LeftHandIndex3': 'leftIndexDistal',
+      'mixamorig:LeftHandMiddle1': 'leftMiddleProximal',
+      'mixamorig:LeftHandMiddle2': 'leftMiddleIntermediate',
+      'mixamorig:LeftHandMiddle3': 'leftMiddleDistal',
+      'mixamorig:LeftHandRing1': 'leftRingProximal',
+      'mixamorig:LeftHandRing2': 'leftRingIntermediate',
+      'mixamorig:LeftHandRing3': 'leftRingDistal',
+      'mixamorig:LeftHandPinky1': 'leftLittleProximal',
+      'mixamorig:LeftHandPinky2': 'leftLittleIntermediate',
+      'mixamorig:LeftHandPinky3': 'leftLittleDistal',
+      // Right hand fingers (Thumb: map 2,3,4 to proximal-intermediate-distal)
+      'mixamorig:RightHandThumb2': 'rightThumbProximal',
+      'mixamorig:RightHandThumb3': 'rightThumbIntermediate',
+      'mixamorig:RightHandThumb4': 'rightThumbDistal',
+      'mixamorig:RightHandIndex1': 'rightIndexProximal',
+      'mixamorig:RightHandIndex2': 'rightIndexIntermediate',
+      'mixamorig:RightHandIndex3': 'rightIndexDistal',
+      'mixamorig:RightHandMiddle1': 'rightMiddleProximal',
+      'mixamorig:RightHandMiddle2': 'rightMiddleIntermediate',
+      'mixamorig:RightHandMiddle3': 'rightMiddleDistal',
+      'mixamorig:RightHandRing1': 'rightRingProximal',
+      'mixamorig:RightHandRing2': 'rightRingIntermediate',
+      'mixamorig:RightHandRing3': 'rightRingDistal',
+      'mixamorig:RightHandPinky1': 'rightLittleProximal',
+      'mixamorig:RightHandPinky2': 'rightLittleIntermediate',
+      'mixamorig:RightHandPinky3': 'rightLittleDistal'
     };
   }
 
