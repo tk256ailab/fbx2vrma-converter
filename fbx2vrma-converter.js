@@ -89,7 +89,7 @@ class FBXToVRMAConverterFixed {
     const outputName = path.basename(outputPath, '.gltf');
     
     // 埋め込み形式でFBX2glTFを実行
-    const command = `${fbx2gltfFullPath} -i "${inputPath}" -o "${path.join(outputDir, outputName)}" --embed`;
+    const command = `"${fbx2gltfFullPath}" -i "${inputPath}" -o "${path.join(outputDir, outputName)}" --embed`;
     console.log(`Executing: ${command}`);
     
     try {
@@ -113,7 +113,7 @@ class FBXToVRMAConverterFixed {
     const outputDir = path.dirname(outputPath);
     const outputName = path.basename(outputPath, '.gltf');
     
-    const command = `${fbx2gltfFullPath} -i "${inputPath}" -o "${path.join(outputDir, outputName)}"`;
+    const command = `"${fbx2gltfFullPath}" -i "${inputPath}" -o "${path.join(outputDir, outputName)}"`;
     
     try {
       execSync(command, { stdio: 'pipe' });
