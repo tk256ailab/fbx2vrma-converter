@@ -8,8 +8,7 @@
   },
   "scripts": {
     "start": "node fbx2vrma-converter.js",
-    "setup": "./setup.sh",
-    "postinstall": "./setup.sh",
+    "postinstall": "node -e \"require('child_process').execSync(process.platform==='win32'?'setup.bat':'sh setup.sh',{stdio:'inherit'})\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -45,11 +44,5 @@
     "commander": "^11.1.0",
     "fs-extra": "^11.2.0"
   },
-  "devDependencies": {},
-  "os": [
-    "darwin"
-  ],
-  "cpu": [
-    "x64"
-  ]
+  "devDependencies": {}
 }
