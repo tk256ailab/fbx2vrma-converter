@@ -1,0 +1,15 @@
+node_modules/
+
+# FBX2glTF binaries (downloaded by setup script)
+FBX2glTF-*
+
+# Temp files from conversion
+*.gltf
+*.bin
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Output files
+*.vrma

@@ -1,184 +1,163 @@
-# FBX to VRMA コンバーター
+# FBX to VRMA コンバーター v2.0
 
-FBXアニメーションファイルをVRMA（VRMアニメーション）形式に変換し、Webアプリケーションでのみウムアニメーションで使用できるようにします。
+FBXアニメーションファイルをVRMA（VRMアニメーション）形式に変換します。
+VRoid Hub、@pixiv/three-vrm-animation、その他のVRM 1.0対応ツールと互換性があります。
 
 [English README](README.md) | 日本語 README
 
-## 🎯 機能
+## 機能
 
-- **🎬 FBX to VRMA変換**: FBXアニメーションをVRMA形式に変換
-- **🎭 Mixamoサポート**: Mixamoアニメーションの自動ボーンマッピング
-- **🔧 埋め込みバッファ**: 外部依存関係不要
-- **✅ VRM互換**: @pixiv/three-vrm-animationとの完全互換性
-- **🧪 検証ツール**: 内蔵の検証とテスト機能
+- **FBX → VRMA変換** — MixamoのFBXアニメーションをVRMA形式に変換
+- **GLBバイナリ出力** — VRoid Hub対応の標準GLBバイナリ形式で出力
+- **52ボーン対応** — 指ボーン30本を含む全ヒューマノイドボーンをマッピング
+- **VRMA仕様準拠** — VRMC_vrm_animation 1.0の仕様に従い、不正なscale/translationチャンネルを除去
+- **バッチ変換** — ディレクトリ内のFBXファイルを一括変換
+- **クロスプラットフォーム** — macOS・Windows・Linux対応。バイナリパスはOSに応じて自動検出
 
-## 🚀 クイックスタート
-
-### 前提条件
+## 必要な環境
 
 - Node.js 18+
-- macOS、Windows、またはLinux
-- FBX2glTFバイナリ（以下のインストール手順を参照）
+- FBX2glTFバイナリ（セットアップスクリプトで自動ダウンロード）
+- macOS（Apple SiliconはRosetta 2が必要）、Windows、またはLinux
 
-### インストール
-
-#### 1. リポジトリのクローン
+## インストール
 
 ```bash
-git clone https://github.com/tk256ailab/fbx2vrma-converter.git
+git clone https://github.com/TK-256/fbx2vrma-converter.git
 cd fbx2vrma-converter
 npm install
-./setup.sh  # FBX2glTFバイナリをダウンロード
 ```
 
-#### 2. FBX2glTFバイナリのダウンロード
-
-**方法1: 自動セットアップ（推奨）**
-
-セットアップスクリプトを実行して、お使いのプラットフォーム用の正しいバイナリを自動ダウンロード：
+`npm install` 実行時にセットアップスクリプトが自動でFBX2glTFバイナリをダウンロードします。
+失敗した場合は手動で実行してください：
 
 ```bash
-# macOS/Linux
+# macOS / Linux
 ./setup.sh
 
-# Windows（コマンドプロンプト）
+# Windows
 setup.bat
-
-# Windows（PowerShell）
-.\setup.bat
 ```
 
-**方法2: 手動ダウンロード**
+### Apple Silicon（M1/M2/M3）
 
-セットアップスクリプトが失敗した場合は、手動でバイナリをダウンロード：
-
-1. [FBX2glTF Releases](https://github.com/facebookincubator/FBX2glTF/releases)にアクセス
-2. 最新リリース（v0.9.7）をクリック
-3. 適切なバイナリをダウンロード：
-   - macOS: `FBX2glTF-darwin-x64`
-   - Windows: `FBX2glTF-windows-x64.exe`
-   - Linux: `FBX2glTF-linux-x64`
-4. プロジェクトディレクトリにバイナリを配置
-5. 実行権限を付与（macOS/Linux）: `chmod +x FBX2glTF-darwin-x64`
-
-#### 3. インストールの確認
+FBX2glTFバイナリはx64のみ提供されています。Rosetta 2をインストールして実行してください：
 
 ```bash
-# バイナリが動作することをテスト
-./FBX2glTF-darwin-x64 --help   # macOS
-./FBX2glTF-windows-x64.exe --help   # Windows
-./FBX2glTF-linux-x64 --help    # Linux
+softwareupdate --install-rosetta --agree-to-license
 ```
 
-### 基本的な使用方法
+### バイナリの手動ダウンロード
+
+スクリプトが失敗した場合は、[FBX2glTF リリースページ](https://github.com/facebookincubator/FBX2glTF/releases/tag/v0.9.7)からバイナリをダウンロードしてプロジェクトディレクトリに配置してください：
+
+| プラットフォーム | バイナリファイル名 |
+|---|---|
+| macOS | `FBX2glTF-darwin-x64` |
+| Windows | `FBX2glTF-windows-x64.exe` |
+| Linux | `FBX2glTF-linux-x64` |
+
+## 使い方
+
+### 単一ファイルの変換
 
 ```bash
-# FBXファイルをVRMAに変換
 node fbx2vrma-converter.js -i input.fbx -o output.vrma
-
-# カスタムフレームレートで変換
-node fbx2vrma-converter.js -i input.fbx -o output.vrma --framerate 60
 ```
 
-### 例
+### バッチ変換
+
+`-i` と `-o` にディレクトリを指定すると、FBXファイルをまとめて変換します：
 
 ```bash
-# Mixamoアニメーションを変換
-node fbx2vrma-converter.js -i examples/SittingLaughing.fbx -o SittingLaughing.vrma
+node fbx2vrma-converter.js -i ./FBX/ -o ./VRMA/
 ```
 
-## 📋 コマンドラインオプション
+出力ファイル名は入力ファイル名から自動生成されます（`Walk.fbx` → `Walk.vrma`）。
 
-```
-オプション:
-  -i, --input <path>      入力FBXファイルパス（必須）
-  -o, --output <path>     出力VRMAファイルパス（必須）
-  --fbx2gltf <path>       FBX2glTFバイナリのパス（デフォルト: ./FBX2glTF-darwin-x64）
-  --framerate <fps>       アニメーションフレームレート（デフォルト: 30）
-  -h, --help              ヘルプ情報を表示
-  -V, --version           バージョン番号を表示
-```
+### オプション
 
-**注意**: お使いのプラットフォームに適したFBX2glTFバイナリパスを指定してください：
-- macOS: `--fbx2gltf ./FBX2glTF-darwin-x64`
-- Windows: `--fbx2gltf ./FBX2glTF-windows-x64.exe`
-- Linux: `--fbx2gltf ./FBX2glTF-linux-x64`
+| オプション | 説明 | デフォルト |
+|---|---|---|
+| `-i, --input <path>` | 入力FBXファイルまたはディレクトリ（必須） | — |
+| `-o, --output <path>` | 出力VRMAファイルまたはディレクトリ（必須） | — |
+| `--fbx2gltf <path>` | FBX2glTFバイナリのパス | OSに応じて自動検出 |
+| `--framerate <fps>` | アニメーションのフレームレート | `30` |
+| `-V, --version` | バージョンを表示 | — |
+| `-h, --help` | ヘルプを表示 | — |
 
-## 🎭 動作原理
+## 動作の仕組み
 
-1. **FBX変換**: FBX2glTFを使用してFBXをglTF形式に変換
-2. **アニメーション強化**: アニメーションタイミングデータを分析・改善
-3. **バッファ埋め込み**: バイナリデータを埋め込んで自己完結型ファイルを作成
-4. **VRMA生成**: 適切なVRM拡張を持つVRMA形式に変換
-5. **ボーンマッピング**: MixamoボーンをVRMヒューマノイド仕様にマッピング
+1. FBX2glTFを使ってFBX → glTFに変換
+2. アニメーションのタイミング（時間・フレーム数）を解析
+3. バイナリバッファをBase64で埋め込み
+4. VRMA仕様違反のチャンネルを除去（ヒューマノイドボーンのscale、hips以外のtranslation）
+5. Mixamoのボーン名をVRMヒューマノイドボーン名にマッピング
+6. ノードからメッシュ・スキン参照と休止姿勢のscaleを除去
+7. GLBバイナリとして出力
 
-## 🔧 技術詳細
+## ボーンマッピング
 
-### サポートされるボーンマッピング
+MixamoのボーンをVRM 1.0ヒューマノイド仕様の52ボーンにマッピングします。
 
-コンバーターは自動的にMixamoボーン名をVRMヒューマノイドボーンにマッピングします：
+**ボディ（22ボーン）**
 
-- `mixamorig:Hips` → `hips`
-- `mixamorig:Spine` → `spine`
-- `mixamorig:Spine1` → `chest`
-- `mixamorig:Spine2` → `upperChest`
-- `mixamorig:Neck` → `neck`
-- `mixamorig:Head` → `head`
-- その他多数...
+| Mixamo | VRM |
+|---|---|
+| `mixamorig:Hips` | `hips` |
+| `mixamorig:Spine` | `spine` |
+| `mixamorig:Spine1` | `chest` |
+| `mixamorig:Spine2` | `upperChest` |
+| `mixamorig:Neck` | `neck` |
+| `mixamorig:Head` | `head` |
+| `mixamorig:LeftShoulder` / `RightShoulder` | `leftShoulder` / `rightShoulder` |
+| `mixamorig:LeftArm` / `RightArm` | `leftUpperArm` / `rightUpperArm` |
+| `mixamorig:LeftForeArm` / `RightForeArm` | `leftLowerArm` / `rightLowerArm` |
+| `mixamorig:LeftHand` / `RightHand` | `leftHand` / `rightHand` |
+| `mixamorig:LeftUpLeg` / `RightUpLeg` | `leftUpperLeg` / `rightUpperLeg` |
+| `mixamorig:LeftLeg` / `RightLeg` | `leftLowerLeg` / `rightLowerLeg` |
+| `mixamorig:LeftFoot` / `RightFoot` | `leftFoot` / `rightFoot` |
+| `mixamorig:LeftToeBase` / `RightToeBase` | `leftToes` / `rightToes` |
 
-### VRMA形式
+**指ボーン（30ボーン）**
 
-生成されるVRMAファイルには以下が含まれます：
-- VRMC_vrm_animation拡張 v1.0
-- 埋め込みバイナリバッファ
-- 適切なアニメーションタイミングメタデータ
-- ヒューマノイドボーンマッピング
+左右それぞれの手に、親指・人差し指・中指・薬指・小指の3関節（proximal / intermediate / distal）分の15ボーンをマッピングします（例：`leftThumbMetacarpal`、`rightIndexDistal`）。
 
-## 🧪 テスト
+## 出力形式
 
-変換されたVRMAファイルは以下と互換性があります：
-- [@pixiv/three-vrm-animation](https://github.com/pixiv/three-vrm) v3.4.1+
-- Three.js r177+
-- モダンWebブラウザ
+- **形式**: GLBバイナリ（標準glTF 2.0バイナリコンテナ）
+- **拡張機能**: `VRMC_vrm_animation` v1.0
+- **動作確認済み**: VRoid Hub、@pixiv/three-vrm-animation v3.4.1+、Three.js r177+
 
-## 📁 プロジェクト構造
+## テスト
 
-```
-fbx2vrma/
-├── fbx2vrma-converter.js    # メインコンバータースクリプト
-├── README.md                # 英語ドキュメント
-├── README-jp.md            # このファイル
-├── package.json            # Node.js依存関係
-├── LICENSE                 # MITライセンス
-└── .gitignore             # Git無視ルール
+```bash
+npm test
 ```
 
-## 🤝 コントリビューション
+ボーンマッピング、アニメーションチャンネルフィルタリング、GLB出力、バッチ変換、入力バリデーションを含む26件のユニットテストを実行します。
 
-1. リポジトリをフォーク
-2. フィーチャーブランチを作成（`git checkout -b feature/amazing-feature`）
-3. 変更をコミット（`git commit -m 'Add amazing feature'`）
-4. ブランチにプッシュ（`git push origin feature/amazing-feature`）
-5. プルリクエストを開く
+## プロジェクト構造
 
-## 📄 ライセンス
+```
+fbx2vrma-converter/
+├── fbx2vrma-converter.js   # メインコンバーター
+├── test.js                 # ユニットテスト
+├── scripts/
+│   └── postinstall.js      # バイナリが存在する場合はセットアップをスキップ
+├── setup.sh                # FBX2glTFダウンロードスクリプト（macOS/Linux）
+├── setup.bat               # FBX2glTFダウンロードスクリプト（Windows）
+├── package.json
+├── LICENSE
+└── .gitignore
+```
 
-このプロジェクトはMITライセンスの下でライセンスされています - 詳細は[LICENSE](LICENSE)ファイルを参照してください。
+## ライセンス
 
-## 🙏 謝辞
+MIT — 詳細は [LICENSE](LICENSE) を参照してください。
 
-- [FBX2glTF](https://github.com/facebookincubator/FBX2glTF) - FBXからglTFへの変換
-- [@pixiv/three-vrm](https://github.com/pixiv/three-vrm) - Three.js用VRMサポート
-- [Mixamo](https://www.mixamo.com/) - アニメーションソース
+## 謝辞
 
-## 📞 サポート
-
-問題が発生した場合や質問がある場合：
-
-1. [Issues](https://github.com/yourusername/fbx2vrma-converter/issues)ページを確認
-2. 詳細情報を含む新しいイシューを作成
-3. 可能であればサンプルファイルを含める
-
----
-
-**主にClaude Codeで作成されました**
+- [FBX2glTF](https://github.com/facebookincubator/FBX2glTF) — FBXからglTFへの変換
+- [@pixiv/three-vrm](https://github.com/pixiv/three-vrm) — Three.js用VRMサポート
+- [Mixamo](https://www.mixamo.com/) — アニメーションソース

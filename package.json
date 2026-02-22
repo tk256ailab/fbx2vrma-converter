@@ -9,8 +9,8 @@
   "scripts": {
     "start": "node fbx2vrma-converter.js",
     "setup": "./setup.sh",
-    "postinstall": "./setup.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "node scripts/postinstall.js",
+    "test": "node --test test.js"
   },
   "keywords": [
     "fbx",
@@ -47,9 +47,12 @@
   },
   "devDependencies": {},
   "os": [
-    "darwin"
+    "darwin",
+    "linux",
+    "win32"
   ],
   "cpu": [
-    "x64"
+    "x64",
+    "arm64"
   ]
 }

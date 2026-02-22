@@ -1,184 +1,163 @@
-# FBX to VRMA Converter
+# FBX to VRMA Converter v2.0
 
-Convert FBX animation files to VRMA (VRM Animation) format for use with VRM models in web applications.
+Convert FBX animation files to VRMA (VRM Animation) format.
+Compatible with VRoid Hub, @pixiv/three-vrm-animation, and other VRM 1.0 tools.
 
 English README | [日本語 README](README-jp.md)
 
-## 🎯 Features
+## Features
 
-- **🎬 FBX to VRMA Conversion**: Convert FBX animations to VRMA format
-- **🎭 Mixamo Support**: Automatic bone mapping for Mixamo animations
-- **🔧 Embedded Buffers**: No external dependencies required
-- **✅ VRM Compatible**: Full compatibility with @pixiv/three-vrm-animation
-- **🧪 Validation Tools**: Built-in validation and testing
+- **FBX to VRMA conversion** — Converts Mixamo FBX animations to VRMA format
+- **GLB binary output** — Outputs standard GLB binary format, compatible with VRoid Hub
+- **52-bone support** — Full humanoid mapping including all finger bones (30 bones)
+- **VRMA spec compliant** — Filters illegal scale/translation channels per VRMC_vrm_animation 1.0
+- **Batch conversion** — Convert an entire directory of FBX files at once
+- **Cross-platform** — macOS, Windows, Linux; binary path auto-detected by OS
 
-## 🚀 Quick Start
-
-### Prerequisites
+## Requirements
 
 - Node.js 18+
-- macOS, Windows, or Linux
-- FBX2glTF binary (see installation below)
+- FBX2glTF binary (downloaded automatically by setup script)
+- macOS (Apple Silicon requires Rosetta 2), Windows, or Linux
 
-### Installation
-
-#### 1. Clone the Repository
+## Installation
 
 ```bash
-git clone https://github.com/tk256ailab/fbx2vrma-converter.git
+git clone https://github.com/TK-256/fbx2vrma-converter.git
 cd fbx2vrma-converter
 npm install
-./setup.sh  # Download FBX2glTF binary
 ```
 
-#### 2. Download FBX2glTF Binary
-
-**Method 1: Automatic Setup (Recommended)**
-
-Run the setup script to automatically download the correct binary for your platform:
+`npm install` automatically downloads the FBX2glTF binary via the setup script.
+If the download fails, run it manually:
 
 ```bash
-# macOS/Linux
+# macOS / Linux
 ./setup.sh
 
-# Windows (Command Prompt)
+# Windows
 setup.bat
-
-# Windows (PowerShell)
-.\setup.bat
 ```
 
-**Method 2: Manual Download**
+### Apple Silicon (M1/M2/M3)
 
-If the setup script fails, manually download the binary:
-
-1. Go to [FBX2glTF Releases](https://github.com/facebookincubator/FBX2glTF/releases)
-2. Click on the latest release (v0.9.7)
-3. Download the appropriate binary:
-   - macOS: `FBX2glTF-darwin-x64`
-   - Windows: `FBX2glTF-windows-x64.exe`
-   - Linux: `FBX2glTF-linux-x64`
-4. Place the binary in your project directory
-5. Make it executable (macOS/Linux): `chmod +x FBX2glTF-darwin-x64`
-
-#### 3. Verify Installation
+The FBX2glTF binary is x64-only. Install Rosetta 2 to run it:
 
 ```bash
-# Test the binary works
-./FBX2glTF-darwin-x64 --help   # macOS
-./FBX2glTF-windows-x64.exe --help   # Windows
-./FBX2glTF-linux-x64 --help    # Linux
+softwareupdate --install-rosetta --agree-to-license
 ```
 
-### Basic Usage
+### Manual binary download
+
+If the script fails, download the binary from the [FBX2glTF releases page](https://github.com/facebookincubator/FBX2glTF/releases/tag/v0.9.7) and place it in the project directory:
+
+| Platform | Binary filename |
+|---|---|
+| macOS | `FBX2glTF-darwin-x64` |
+| Windows | `FBX2glTF-windows-x64.exe` |
+| Linux | `FBX2glTF-linux-x64` |
+
+## Usage
+
+### Single file
 
 ```bash
-# Convert an FBX file to VRMA
 node fbx2vrma-converter.js -i input.fbx -o output.vrma
-
-# With custom framerate
-node fbx2vrma-converter.js -i input.fbx -o output.vrma --framerate 60
 ```
 
-### Example
+### Batch conversion
+
+Specify a directory for `-i` and `-o` to convert all FBX files at once:
 
 ```bash
-# Convert Mixamo animation
-node fbx2vrma-converter.js -i examples/SittingLaughing.fbx -o SittingLaughing.vrma
+node fbx2vrma-converter.js -i ./FBX/ -o ./VRMA/
 ```
 
-## 📋 Command Line Options
+Output filenames are derived from the input filenames (`Walk.fbx` → `Walk.vrma`).
 
-```
-Options:
-  -i, --input <path>      Input FBX file path (required)
-  -o, --output <path>     Output VRMA file path (required)
-  --fbx2gltf <path>       Path to FBX2glTF binary (default: ./FBX2glTF-darwin-x64)
-  --framerate <fps>       Animation framerate (default: 30)
-  -h, --help              Display help information
-  -V, --version           Display version number
-```
+### Options
 
-**Note**: Make sure to specify the correct FBX2glTF binary path for your platform:
-- macOS: `--fbx2gltf ./FBX2glTF-darwin-x64`
-- Windows: `--fbx2gltf ./FBX2glTF-windows-x64.exe`
-- Linux: `--fbx2gltf ./FBX2glTF-linux-x64`
+| Option | Description | Default |
+|---|---|---|
+| `-i, --input <path>` | Input FBX file or directory (required) | — |
+| `-o, --output <path>` | Output VRMA file or directory (required) | — |
+| `--fbx2gltf <path>` | Path to FBX2glTF binary | Auto-detected by OS |
+| `--framerate <fps>` | Animation framerate | `30` |
+| `-V, --version` | Show version | — |
+| `-h, --help` | Show help | — |
 
-## 🎭 How It Works
+## How it works
 
-1. **FBX Conversion**: Uses FBX2glTF to convert FBX to glTF format
-2. **Animation Enhancement**: Analyzes and improves animation timing data
-3. **Buffer Embedding**: Embeds binary data to create self-contained files
-4. **VRMA Generation**: Converts to VRMA format with proper VRM extensions
-5. **Bone Mapping**: Maps Mixamo bones to VRM humanoid specification
+1. Convert FBX → glTF using FBX2glTF
+2. Analyze animation timing (duration, frame count)
+3. Embed binary buffer as base64
+4. Filter channels that violate VRMA spec (scale on humanoid bones, translation on non-hips bones)
+5. Map Mixamo bone names to VRM humanoid bone names
+6. Strip mesh/skin references and rest-pose scale from nodes
+7. Output as GLB binary
 
-## 🔧 Technical Details
+## Bone mapping
 
-### Supported Bone Mapping
+The converter maps 52 Mixamo bones to the VRM 1.0 humanoid specification.
 
-The converter automatically maps Mixamo bone names to VRM humanoid bones:
+**Body (22 bones)**
 
-- `mixamorig:Hips` → `hips`
-- `mixamorig:Spine` → `spine`
-- `mixamorig:Spine1` → `chest`
-- `mixamorig:Spine2` → `upperChest`
-- `mixamorig:Neck` → `neck`
-- `mixamorig:Head` → `head`
-- And many more...
+| Mixamo | VRM |
+|---|---|
+| `mixamorig:Hips` | `hips` |
+| `mixamorig:Spine` | `spine` |
+| `mixamorig:Spine1` | `chest` |
+| `mixamorig:Spine2` | `upperChest` |
+| `mixamorig:Neck` | `neck` |
+| `mixamorig:Head` | `head` |
+| `mixamorig:LeftShoulder` / `RightShoulder` | `leftShoulder` / `rightShoulder` |
+| `mixamorig:LeftArm` / `RightArm` | `leftUpperArm` / `rightUpperArm` |
+| `mixamorig:LeftForeArm` / `RightForeArm` | `leftLowerArm` / `rightLowerArm` |
+| `mixamorig:LeftHand` / `RightHand` | `leftHand` / `rightHand` |
+| `mixamorig:LeftUpLeg` / `RightUpLeg` | `leftUpperLeg` / `rightUpperLeg` |
+| `mixamorig:LeftLeg` / `RightLeg` | `leftLowerLeg` / `rightLowerLeg` |
+| `mixamorig:LeftFoot` / `RightFoot` | `leftFoot` / `rightFoot` |
+| `mixamorig:LeftToeBase` / `RightToeBase` | `leftToes` / `rightToes` |
 
-### VRMA Format
+**Fingers (30 bones)**
 
-The generated VRMA files include:
-- VRMC_vrm_animation extension v1.0
-- Embedded binary buffers
-- Proper animation timing metadata
-- Humanoid bone mappings
+Each hand has 15 bones covering thumb, index, middle, ring, and little fingers (proximal / intermediate / distal), mapped to the corresponding VRM 1.0 names (e.g. `leftThumbMetacarpal`, `rightIndexDistal`).
 
-## 🧪 Testing
+## Output format
 
-The converted VRMA files are compatible with:
-- [@pixiv/three-vrm-animation](https://github.com/pixiv/three-vrm) v3.4.1+
-- Three.js r177+
-- Modern web browsers
+- **Format**: GLB binary (standard glTF 2.0 binary container)
+- **Extension**: `VRMC_vrm_animation` v1.0
+- **Compatible with**: VRoid Hub, @pixiv/three-vrm-animation v3.4.1+, Three.js r177+
 
-## 📁 Project Structure
+## Testing
 
-```
-fbx2vrma/
-├── fbx2vrma-converter.js    # Main converter script
-├── README.md                # This file
-├── README-jp.md            # Japanese documentation
-├── package.json            # Node.js dependencies
-├── LICENSE                 # MIT License
-└── .gitignore             # Git ignore rules
+```bash
+npm test
 ```
 
-## 🤝 Contributing
+Runs 26 unit tests covering bone mapping, animation channel filtering, GLB output, batch conversion, and input validation.
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+## Project structure
 
-## 📄 License
+```
+fbx2vrma-converter/
+├── fbx2vrma-converter.js   # Main converter
+├── test.js                 # Unit tests
+├── scripts/
+│   └── postinstall.js      # Skips setup if binary already exists
+├── setup.sh                # FBX2glTF download script (macOS/Linux)
+├── setup.bat               # FBX2glTF download script (Windows)
+├── package.json
+├── LICENSE
+└── .gitignore
+```
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## License
 
-## 🙏 Acknowledgments
+MIT — see [LICENSE](LICENSE) for details.
 
-- [FBX2glTF](https://github.com/facebookincubator/FBX2glTF) - FBX to glTF conversion
-- [@pixiv/three-vrm](https://github.com/pixiv/three-vrm) - VRM support for Three.js
-- [Mixamo](https://www.mixamo.com/) - Animation source
+## Acknowledgments
 
-## 📞 Support
-
-If you encounter any issues or have questions:
-
-1. Check the [Issues](https://github.com/yourusername/fbx2vrma-converter/issues) page
-2. Create a new issue with detailed information
-3. Include sample files if possible
-
----
-
-**Mainly created using Claude Code**
+- [FBX2glTF](https://github.com/facebookincubator/FBX2glTF) — FBX to glTF conversion
+- [@pixiv/three-vrm](https://github.com/pixiv/three-vrm) — VRM support for Three.js
+- [Mixamo](https://www.mixamo.com/) — Animation source

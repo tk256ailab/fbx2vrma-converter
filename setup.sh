@@ -16,7 +16,15 @@ case "$(uname -s)" in
     Darwin*)
         OS="darwin"
         BINARY_NAME="FBX2glTF-darwin-x64"
-        echo "📱 Detected: macOS"
+        ARCH="$(uname -m)"
+        if [ "$ARCH" = "arm64" ]; then
+            echo "📱 Detected: macOS (Apple Silicon / arm64)"
+            echo "   Note: Using x64 binary via Rosetta 2."
+            echo "   If Rosetta 2 is not installed, run:"
+            echo "   softwareupdate --install-rosetta --agree-to-license"
+        else
+            echo "📱 Detected: macOS (Intel / x64)"
+        fi
         ;;
     Linux*)
         OS="linux"

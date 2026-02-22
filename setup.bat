@@ -39,7 +39,6 @@ if %errorlevel% neq 0 (
     echo 4. Place it in this directory: %CD%
     echo 5. Run this script again
     echo.
-    pause
     exit /b 1
 )
 
@@ -60,9 +59,7 @@ if %errorlevel% == 0 (
     echo The downloaded file may be corrupted.
     echo Please try running this script again or download manually.
     echo.
-    pause
     exit /b 1
 )
 
 :end
-pause
