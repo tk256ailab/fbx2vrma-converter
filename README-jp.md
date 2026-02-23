@@ -1,4 +1,4 @@
-# FBX to VRMA コンバーター v2.0
+# FBX to VRMA コンバーター v2.1
 
 FBXアニメーションファイルをVRMA（VRMアニメーション）形式に変換します。
 VRoid Hub、@pixiv/three-vrm-animation、その他のVRM 1.0対応ツールと互換性があります。
@@ -61,13 +61,22 @@ softwareupdate --install-rosetta --agree-to-license
 
 ### 単一ファイルの変換
 
+`-o` は省略可能です。省略した場合、入力ファイルと同じディレクトリに同じファイル名で `.vrma` 拡張子として保存されます。
+
 ```bash
-node fbx2vrma-converter.js -i input.fbx -o output.vrma
+# 入力ファイルと同じディレクトリに input.vrma として保存
+node fbx2vrma-converter.js -i input.fbx
+
+# 指定したディレクトリに input.vrma として保存
+node fbx2vrma-converter.js -i input.fbx -o ./output/
+
+# ファイル名まで明示して保存
+node fbx2vrma-converter.js -i input.fbx -o ./output/animation.vrma
 ```
 
 ### バッチ変換
 
-`-i` と `-o` にディレクトリを指定すると、FBXファイルをまとめて変換します：
+`-i` にディレクトリを指定すると、FBXファイルをまとめて変換します。`-o` を省略した場合は入力ディレクトリに保存されます。
 
 ```bash
 node fbx2vrma-converter.js -i ./FBX/ -o ./VRMA/
@@ -80,7 +89,7 @@ node fbx2vrma-converter.js -i ./FBX/ -o ./VRMA/
 | オプション | 説明 | デフォルト |
 |---|---|---|
 | `-i, --input <path>` | 入力FBXファイルまたはディレクトリ（必須） | — |
-| `-o, --output <path>` | 出力VRMAファイルまたはディレクトリ（必須） | — |
+| `-o, --output <path>` | 出力VRMAファイルまたはディレクトリ | 入力ファイルと同じディレクトリ |
 | `--fbx2gltf <path>` | FBX2glTFバイナリのパス | OSに応じて自動検出 |
 | `--framerate <fps>` | アニメーションのフレームレート | `30` |
 | `-V, --version` | バージョンを表示 | — |
@@ -129,20 +138,11 @@ MixamoのボーンをVRM 1.0ヒューマノイド仕様の52ボーンにマッ�
 - **拡張機能**: `VRMC_vrm_animation` v1.0
 - **動作確認済み**: VRoid Hub、@pixiv/three-vrm-animation v3.4.1+、Three.js r177+
 
-## テスト
-
-```bash
-npm test
-```
-
-ボーンマッピング、アニメーションチャンネルフィルタリング、GLB出力、バッチ変換、入力バリデーションを含む26件のユニットテストを実行します。
-
 ## プロジェクト構造
 
 ```
 fbx2vrma-converter/
 ├── fbx2vrma-converter.js   # メインコンバーター
-├── test.js                 # ユニットテスト
 ├── scripts/
 │   └── postinstall.js      # バイナリが存在する場合はセットアップをスキップ
 ├── setup.sh                # FBX2glTFダウンロードスクリプト（macOS/Linux）

@@ -1,4 +1,4 @@
-# FBX to VRMA Converter v2.0
+# FBX to VRMA Converter v2.1
 
 Convert FBX animation files to VRMA (VRM Animation) format.
 Compatible with VRoid Hub, @pixiv/three-vrm-animation, and other VRM 1.0 tools.
@@ -61,13 +61,22 @@ If the script fails, download the binary from the [FBX2glTF releases page](https
 
 ### Single file
 
+`-o` is optional. If omitted, the output is saved in the same directory as the input with the same filename and a `.vrma` extension.
+
 ```bash
-node fbx2vrma-converter.js -i input.fbx -o output.vrma
+# Output saved as input.vrma in the same directory
+node fbx2vrma-converter.js -i input.fbx
+
+# Output saved as input.vrma in the specified directory
+node fbx2vrma-converter.js -i input.fbx -o ./output/
+
+# Output saved with an explicit filename
+node fbx2vrma-converter.js -i input.fbx -o ./output/animation.vrma
 ```
 
 ### Batch conversion
 
-Specify a directory for `-i` and `-o` to convert all FBX files at once:
+Specify a directory for `-i` to convert all FBX files at once. `-o` defaults to the input directory if omitted.
 
 ```bash
 node fbx2vrma-converter.js -i ./FBX/ -o ./VRMA/
@@ -80,7 +89,7 @@ Output filenames are derived from the input filenames (`Walk.fbx` → `Walk.vrma
 | Option | Description | Default |
 |---|---|---|
 | `-i, --input <path>` | Input FBX file or directory (required) | — |
-| `-o, --output <path>` | Output VRMA file or directory (required) | — |
+| `-o, --output <path>` | Output VRMA file or directory | Same directory as input |
 | `--fbx2gltf <path>` | Path to FBX2glTF binary | Auto-detected by OS |
 | `--framerate <fps>` | Animation framerate | `30` |
 | `-V, --version` | Show version | — |
@@ -135,7 +144,7 @@ Each hand has 15 bones covering thumb, index, middle, ring, and little fingers (
 npm test
 ```
 
-Runs 26 unit tests covering bone mapping, animation channel filtering, GLB output, batch conversion, and input validation.
+Runs 30 unit tests covering bone mapping, animation channel filtering, GLB output, output path resolution, batch conversion, and input validation.
 
 ## Project structure
 

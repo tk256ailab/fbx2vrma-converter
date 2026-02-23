@@ -437,6 +437,40 @@ describe('convert (validation)', () => {
   });
 });
 
+describe('resolveOutputPath', () => {
+  const { mkdtempSync, rmSync } = require('fs');
+  const tmpdir = require('os').tmpdir;
+
+  it('should use input dir and name when no output is specified', async () => {
+    const converter = createConverter();
+    const result = await converter.resolveOutputPath('/some/dir/animation.fbx', undefined);
+    assert.equal(result, '/some/dir/animation.vrma');
+  });
+
+  it('should use input filename in an existing output directory', async () => {
+    const converter = createConverter();
+    const dir = mkdtempSync(tmpdir() + '/fbx2vrma-test-');
+    try {
+      const result = await converter.resolveOutputPath('/some/animation.fbx', dir);
+      assert.equal(result, require('path').join(dir, 'animation.vrma'));
+    } finally {
+      rmSync(dir, { recursive: true });
+    }
+  });
+
+  it('should treat trailing slash as a directory path', async () => {
+    const converter = createConverter();
+    const result = await converter.resolveOutputPath('/some/animation.fbx', '/output/dir/');
+    assert.equal(result, '/output/dir/animation.vrma');
+  });
+
+  it('should use the specified path as-is when it is a file path', async () => {
+    const converter = createConverter();
+    const result = await converter.resolveOutputPath('/some/animation.fbx', '/output/custom.vrma');
+    assert.equal(result, '/output/custom.vrma');
+  });
+});
+
 describe('convertDirectory', () => {
   const { mkdtempSync, writeFileSync, rmSync } = require('fs');
   const tmpdir = require('os').tmpdir;
